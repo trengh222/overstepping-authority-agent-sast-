@@ -1,0 +1,25 @@
+case_id,category,language,real_vulnerability,endpoint_path,source_file,note
+js-a1-001,A1-IDOR,js,1,/api/orders/:id,js/js-a1-001/routes.js,路由直接用 req.params.id 取订单并原样返回 归属字段 userId 从未参与判断
+js-a1-002,A1-IDOR,js,1,/api/invoices,js/js-a1-002/routes.js,发票号来自 invoiceId 查询参数 SQL 仅按 number 过滤 缺少 user_id 条件
+js-a1-003,A1-IDOR,js,1,/api/documents/:id,js/js-a1-003/documents.controller.ts,controller 把 @Param 的 id 直接交给 service 查询未附加 ownerId
+js-a1-004,A1-IDOR,js,1,/api/messages,js/js-a1-004/routes.js,列表接口用 userId 查询参数指定归属 任意登录用户可读他人全部消息
+js-a1-005,A1-IDOR,js,1,/api/files/batch,js/js-a1-005/routes.js,批量接口的 ids 全部来自请求体 未做归属校验即按 $in 全量返回
+js-a1-006,A1-IDOR,js,1,/api/payments/:id/receipt,js/js-a1-006/routes.js,路径参数决定支付单号 收据按 payment_id 直查后直接 res.download
+js-a1-007,A1-IDOR,js,0,/api/addresses/:id,js/js-a1-007/routes.js,查询条件同时包含 _id 与 userId=req.user.id 越权访问只命中 404
+js-a1-008,A1-IDOR,js,0,/api/tickets/:id,js/js-a1-008/tickets.controller.ts,controller 比对 ticket.ownerId 与令牌 sub 不一致即抛 ForbiddenException
+js-a1-009,A1-IDOR,js,0,/api/orders,js/js-a1-009/routes.js,列表 SQL 的 WHERE 子句绑定 user_id 与当前会话用户
+js-a1-010,A1-IDOR,js,0,/api/files/:id/download,js/js-a1-010/files.controller.ts,service 层 findOwned 同时匹配主键与 ownerId 他人文件返回 404
+js-a2-001,A2-Vertical,js,1,/api/admin/users/:id,js/js-a2-001/routes.js,删除用户路由只挂登录态校验 同模块列表路由带了 requireAdmin
+js-a2-002,A2-Vertical,js,1,/api/admin/users/:id/role,js/js-a2-002/routes.js,改角色路由仅 requireAuth 无管理员校验 任意登录用户可把他人提权
+js-a2-003,A2-Vertical,js,1,/api/admin/users/:id/role,js/js-a2-003/admin.controller.ts,设置角色路由只有 AuthGuard 未加 RolesGuard 与 @Roles 任意登录用户可改角色
+js-a2-004,A2-Vertical,js,0,/api/admin/refunds,js/js-a2-004/routes.js,退款路由链上同时带 requireAuth 与 requireRole('admin') 非管理员被 403
+js-a3-001,A3-Unauth,js,1,/api/reports/export,js/js-a3-001/routes.js,应用未挂任何鉴权中间件 导出接口匿名返回全量报税记录
+js-a3-002,A3-Unauth,js,1,/internal/metrics/sessions,js/js-a3-002/internal.js,内部运维路由直接挂到公网 app 无令牌校验即可读取全量会话
+js-a3-003,A3-Unauth,js,1,/internal/jobs/dlq,js/js-a3-003/jobs.controller.ts,控制器未加 AuthGuard 且模块无 APP_GUARD 死信队列可匿名读取
+js-a3-004,A3-Unauth,js,0,/api/accounts,js/js-a3-004/routes.js,app.use(requireAuth) 全局前置于业务路由 未带合法会话一律 401
+js-a4-001,A4-ClientAuth,js,1,/api/billing/statements,js/js-a4-001/routes.js,身份取自 X-User-Id 请求头 伪造该头即可读他人账单
+js-a4-002,A4-ClientAuth,js,1,/api/notifications,js/js-a4-002/routes.js,身份取自未签名的 uid cookie 伪造 cookie 即可读他人通知
+js-a4-003,A4-ClientAuth,js,0,/api/profile/contact,js/js-a4-003/profile.controller.ts,身份与角色均取自验签令牌 请求体里的 role 被显式拒绝
+js-b6-001,B6-FieldExposure,js,1,/api/me,js/js-b6-001/routes.js,把 users 整行实体 res.json 下发 含 password_hash 与 ssn
+js-b6-002,B6-FieldExposure,js,1,/api/orders/:id,js/js-b6-002/routes.js,归属校验通过后仍 JSON.stringify 整个订单 内部成本与支付单号外泄
+js-b6-003,B6-FieldExposure,js,0,/api/orders/:id,js/js-b6-003/orders.controller.ts,controller 用 pick 只返回白名单字段 内部成本与支付单号不外发

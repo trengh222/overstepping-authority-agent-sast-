@@ -1,0 +1,42 @@
+# 真实靶场 ground truth（能力边界 gap 记录，方案 §11.1）
+#
+# 这些靶场的越权漏洞形态落在 access-scan 当前能力之外：
+#   - WebGoat IDOR：漏洞是 `new UserProfile(userId)` 构造函数「模拟 DB 查找」，
+#     不是 Repository/Mapper/JdbcTemplate 等真实 DB sink，数据流层不产出 ResourceAccess。
+#   - DVWA BAC：纯 PHP `$_GET['user_id']` + mysqli_query，而 PHP 前端仅识别 Laravel
+#     `Route::get` 路由，连端点都无法提取。
+# 本文件仅用于「如实记录 gap」，不参与主 Recall/Precision 指标
+# （主指标仍基于 ground_truth.yaml 的自建 fixtures 样本）。
+
+webgoat:
+  dir: "webgoat/src/main/java/org/owasp/webgoat/lessons/idor"
+  lang: "java"
+  positives:
+    - method: "GET"
+      path: "/IDOR/profile/{userId}"
+      subtype: "A1"
+      handler: "IDORViewOtherProfile.completed"
+      reason: "userId 客户端可控，直接 new UserProfile(userId) 查他人 profile，无水平越权校验（源码注释自证：'secure code would ensure there was a horizontal access control check'）"
+    - method: "PUT"
+      path: "/IDOR/profile/{userId}"
+      subtype: "A1"
+      handler: "IDOREditOtherProfile.completed"
+      reason: "userId 客户端可控，编辑他人 profile，未校验归属（源码注释自证：'not checking for proper authorization'）"
+  negatives:
+    - method: "GET"
+      path: "/IDOR/own"
+      reason: "IDORViewOwnProfile 用 session 的 authUserId（非客户端输入），安全对照"
+
+dvwa:
+  dir: "dvwa/vulnerabilities/bac"
+  lang: "php"
+  positives:
+    - file: "vulnerabilities/bac/source/low.php"
+      reason: "$_GET['user_id'] 客户端可控，用可伪造的 cookie user_id 做归属校验，水平越权"
+    - file: "vulnerabilities/bac/source/medium.php"
+      reason: "$_GET['user_id'] 客户端可控，硬编码 token('user_token') 易绕过，水平越权"
+    - file: "vulnerabilities/bac/source/high.php"
+      reason: "$_GET['user_id'] 客户端可控，session 校验仍可被 session fixation 绕过，水平越权"
+  negatives:
+    - file: "vulnerabilities/bac/source/impossible.php"
+      reason: "$current_user_id === $id 严格归属校验，安全对照"

@@ -1,0 +1,5 @@
+# 配置开关声明（可达性剪枝用，方案 §11 方向三）。
+# 值：true=启用(reachable)，false=禁用(unreachable)；未声明的开关 → needs_config。
+# 判定只针对「handler 内读取了该开关」的候选，unreachable 仅降级不删除。
+flags:
+  export.enabled: false

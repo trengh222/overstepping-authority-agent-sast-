@@ -1,0 +1,1 @@
+"""L6 报告层：SARIF 2.1.0 / Markdown / JSON。"""

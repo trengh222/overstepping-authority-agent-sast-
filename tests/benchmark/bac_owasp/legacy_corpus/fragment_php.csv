@@ -1,0 +1,21 @@
+case_id,category,language,real_vulnerability,endpoint_path,source_file,note
+php-a1-001,A1-IDOR,php,1,/api/orders/{id},php/php-a1-001/app/Http/Controllers/OrderController.php,已登录用户可传他人订单 id，控制器仅按 id 查询并返回，未绑定当前用户
+php-a1-002,A1-IDOR,php,1,/invoices.php?user_id={user_id},php/php-a1-002/invoices.php,user_id 直接取自查询参数，可列出任意用户的发票
+php-a1-003,A1-IDOR,php,1,/download.php?id={id},php/php-a1-003/download.php,仅凭请求 id 读取文档并下载文件，未校验文档归属
+php-a1-004,A1-IDOR,php,1,/api/messages?owner_id={owner_id},php/php-a1-004/app/Http/Controllers/MessageController.php,owner_id 取自查询参数，可读取他人站内信列表
+php-a1-005,A1-IDOR,php,1,/ticket_update.php,php/php-a1-005/ticket_update.php,工单 id 来自请求体，直接 UPDATE 状态，未校验工单归属
+php-a1-006,A1-IDOR,php,1,/files_batch.php?ids={ids},php/php-a1-006/files_batch.php,ids 来自查询参数批量取文件元数据，未按归属过滤
+php-a1-007,A1-IDOR,php,0,/api/orders/{id},php/php-a1-007/app/Http/Controllers/OrderController.php,查询同时约束 id 与当前用户的 user_id，越权取数被阻断
+php-a1-008,A1-IDOR,php,0,/api/orders/{id},php/php-a1-008/app/Http/Controllers/OrderController.php,取回订单后比较 user_id 与当前用户，不一致返回 403
+php-a1-009,A1-IDOR,php,0,/invoice.php?id={id},php/php-a1-009/invoice.php,以 session 用户 id 作为 SQL 第二条件，越权查询取不到数据
+php-a2-001,A2-Vertical,php,1,/admin/users/{id}/role,php/php-a2-001/routes/api.php,后台改角色接口未挂 auth/admin 中间件且无角色校验
+php-a2-002,A2-Vertical,php,1,/admin/config/update.php,php/php-a2-002/admin/config/update.php,仅校验 session 登录态，未校验管理员角色即可改站点全局配置
+php-a2-003,A2-Vertical,php,0,/admin/orders/{id}/refund,php/php-a2-003/routes/api.php,路由组挂 auth:sanctum 与 admin 中间件，控制器再次校验角色
+php-a3-001,A3-Unauth,php,1,/api/reports/revenue,php/php-a3-001/routes/api.php,营收报表路由无任何认证中间件，匿名可读
+php-a3-002,A3-Unauth,php,1,/internal/users/export.php,php/php-a3-002/internal/users/export.php,内部用户导出脚本无 session 校验，匿名可直接下载
+php-a3-003,A3-Unauth,php,1,/internal/jobs/{id}/retry,php/php-a3-003/routes/api.php,内部任务重试接口无认证，匿名可触发特权操作
+php-a3-004,A3-Unauth,php,0,/api/settings,php/php-a3-004/routes/api.php,路由挂 auth:sanctum，未认证请求被拦截
+php-b6-001,B6-FieldExposure,php,1,/api/profile,php/php-b6-001/app/Http/Controllers/ProfileController.php,DB::table 取 users 整行（含 password 与 api_token）后 json 直出
+php-b6-002,B6-FieldExposure,php,1,/api/members/me.php,php/php-b6-002/api/members/me.php,SELECT * 后整行 json_encode，暴露 password、phone、card_no
+php-b6-003,B6-FieldExposure,php,1,/admin/members,php/php-b6-003/app/Http/Controllers/Admin/MemberController.php,后台成员列表整实体序列化，暴露 email、phone、card_no
+php-b6-004,B6-FieldExposure,php,0,/api/tickets/{id},php/php-b6-004/app/Http/Controllers/TicketController.php,归属过滤后仅按 only() 白名单输出非敏感字段

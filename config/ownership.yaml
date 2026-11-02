@@ -1,0 +1,40 @@
+# 所有权模型：声明式 + 人工反馈闭环（方案 §8）
+# 三层构建：安全团队声明 → LLM 推断(UNKNOWN) → 人工打标回写本文件
+version: 1
+resources:
+  - entity: Order
+    identifier_field: id
+    owner_field: user_id
+    privacy: PRIVATE
+  - entity: Product
+    identifier_field: id
+    owner_field: null
+    privacy: PUBLIC
+  - entity: File
+    identifier_field: id
+    owner_field: uploader_id
+    privacy: UNKNOWN          # 未声明时交给 LLM 推断
+default_privacy: UNKNOWN
+
+# 字段级敏感性（规则 B6：属性级越权/敏感字段暴露）。
+# 元素为正则片段，匹配字段名（匹配时忽略大小写与下划线）；命中即视为敏感字段。
+sensitive_fields:
+  - phone
+  - mobile
+  - email
+  - id_?card
+  - idcard
+  - real_?name
+  - address
+  - bank_?card
+  - card_?no
+  - balance
+  - salary
+  - password
+  - passwd
+  - pwd
+  - access_?token
+  - refresh_?token
+  - birthday
+  - birth_?date
+  - ssn

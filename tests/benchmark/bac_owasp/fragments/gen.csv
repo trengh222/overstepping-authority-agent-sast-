@@ -1,0 +1,37 @@
+case_id,category,language,real_vulnerability,endpoint_path,source_file,note
+gen-java-a1-pos-order,A1-IDOR,java,1,/api/orders/{id},java/gen-java-a1-pos-order/OrderController.java,路径参数 id 直接查库无归属校验
+gen-java-a1-pos-invoice,A1-IDOR,java,1,/api/invoices/{id},java/gen-java-a1-pos-invoice/InvoiceController.java,路径参数 id 直接查库无归属校验
+gen-java-a1-pos-document,A1-IDOR,java,1,/api/documents/{id},java/gen-java-a1-pos-document/DocumentController.java,路径参数 id 直接查库无归属校验
+gen-java-a1-pos-message,A1-IDOR,java,1,/api/messages/{id},java/gen-java-a1-pos-message/MessageController.java,路径参数 id 直接查库无归属校验
+gen-java-a1-pos-file,A1-IDOR,java,1,/api/files/{id},java/gen-java-a1-pos-file/FileRecordController.java,路径参数 id 直接查库无归属校验
+gen-java-a1-pos-ticket,A1-IDOR,java,1,/api/tickets/{id},java/gen-java-a1-pos-ticket/TicketController.java,路径参数 id 直接查库无归属校验
+gen-java-a1-neg-order,A1-IDOR,java,0,/api/orders/{id},java/gen-java-a1-neg-order/OrderController.java,service 层 id+userId 归属过滤
+gen-java-a1-neg-invoice,A1-IDOR,java,0,/api/invoices/{id},java/gen-java-a1-neg-invoice/InvoiceController.java,service 层 id+userId 归属过滤
+gen-java-a1-neg-document,A1-IDOR,java,0,/api/documents/{id},java/gen-java-a1-neg-document/DocumentController.java,service 层 id+userId 归属过滤
+gen-java-a1-neg-message,A1-IDOR,java,0,/api/messages/{id},java/gen-java-a1-neg-message/MessageController.java,service 层 id+userId 归属过滤
+gen-java-a1-neg-file,A1-IDOR,java,0,/api/files/{id},java/gen-java-a1-neg-file/FileRecordController.java,service 层 id+userId 归属过滤
+gen-java-a1-neg-ticket,A1-IDOR,java,0,/api/tickets/{id},java/gen-java-a1-neg-ticket/TicketController.java,service 层 id+userId 归属过滤
+gen-js-a1-pos-order,A1-IDOR,js,1,/api/orders/:id,js/gen-js-a1-pos-order/routes.js,Express :id 直接查库无归属校验
+gen-js-a1-pos-invoice,A1-IDOR,js,1,/api/invoices/:id,js/gen-js-a1-pos-invoice/routes.js,Express :id 直接查库无归属校验
+gen-js-a1-pos-document,A1-IDOR,js,1,/api/documents/:id,js/gen-js-a1-pos-document/routes.js,Express :id 直接查库无归属校验
+gen-js-a1-pos-message,A1-IDOR,js,1,/api/messages/:id,js/gen-js-a1-pos-message/routes.js,Express :id 直接查库无归属校验
+gen-js-a1-pos-file,A1-IDOR,js,1,/api/files/:id,js/gen-js-a1-pos-file/routes.js,Express :id 直接查库无归属校验
+gen-js-a1-pos-ticket,A1-IDOR,js,1,/api/tickets/:id,js/gen-js-a1-pos-ticket/routes.js,Express :id 直接查库无归属校验
+gen-js-a1-neg-order,A1-IDOR,js,0,/api/orders/:id,js/gen-js-a1-neg-order/routes.js,SQL 带 user_id 归属过滤
+gen-js-a1-neg-invoice,A1-IDOR,js,0,/api/invoices/:id,js/gen-js-a1-neg-invoice/routes.js,SQL 带 user_id 归属过滤
+gen-js-a1-neg-document,A1-IDOR,js,0,/api/documents/:id,js/gen-js-a1-neg-document/routes.js,SQL 带 user_id 归属过滤
+gen-js-a1-neg-message,A1-IDOR,js,0,/api/messages/:id,js/gen-js-a1-neg-message/routes.js,SQL 带 user_id 归属过滤
+gen-js-a1-neg-file,A1-IDOR,js,0,/api/files/:id,js/gen-js-a1-neg-file/routes.js,SQL 带 user_id 归属过滤
+gen-js-a1-neg-ticket,A1-IDOR,js,0,/api/tickets/:id,js/gen-js-a1-neg-ticket/routes.js,SQL 带 user_id 归属过滤
+gen-go-a1-pos-order,A1-IDOR,go,1,/api/orders/:id,go/gen-go-a1-pos-order/main.go,Gin :id 直接查库无归属校验
+gen-go-a1-pos-invoice,A1-IDOR,go,1,/api/invoices/:id,go/gen-go-a1-pos-invoice/main.go,Gin :id 直接查库无归属校验
+gen-go-a1-pos-document,A1-IDOR,go,1,/api/documents/:id,go/gen-go-a1-pos-document/main.go,Gin :id 直接查库无归属校验
+gen-go-a1-pos-message,A1-IDOR,go,1,/api/messages/:id,go/gen-go-a1-pos-message/main.go,Gin :id 直接查库无归属校验
+gen-go-a1-pos-file,A1-IDOR,go,1,/api/files/:id,go/gen-go-a1-pos-file/main.go,Gin :id 直接查库无归属校验
+gen-go-a1-pos-ticket,A1-IDOR,go,1,/api/tickets/:id,go/gen-go-a1-pos-ticket/main.go,Gin :id 直接查库无归属校验
+gen-go-a1-neg-order,A1-IDOR,go,0,/api/orders/:id,go/gen-go-a1-neg-order/main.go,SQL 带 user_id 归属过滤
+gen-go-a1-neg-invoice,A1-IDOR,go,0,/api/invoices/:id,go/gen-go-a1-neg-invoice/main.go,SQL 带 user_id 归属过滤
+gen-go-a1-neg-document,A1-IDOR,go,0,/api/documents/:id,go/gen-go-a1-neg-document/main.go,SQL 带 user_id 归属过滤
+gen-go-a1-neg-message,A1-IDOR,go,0,/api/messages/:id,go/gen-go-a1-neg-message/main.go,SQL 带 user_id 归属过滤
+gen-go-a1-neg-file,A1-IDOR,go,0,/api/files/:id,go/gen-go-a1-neg-file/main.go,SQL 带 user_id 归属过滤
+gen-go-a1-neg-ticket,A1-IDOR,go,0,/api/tickets/:id,go/gen-go-a1-neg-ticket/main.go,SQL 带 user_id 归属过滤

@@ -1,0 +1,27 @@
+case_id,category,language,real_vulnerability,endpoint_path,source_file,note
+python-a1-001,A1-IDOR,python,1,/api/orders/<int:order_id>,python/python-a1-001/app.py,已登录用户可用任意 order_id 读取订单，SQL 未按当前用户过滤。
+python-a1-002,A1-IDOR,python,1,/api/invoices/{invoice_id},python/python-a1-002/main.py,认证依赖存在但未使用，发票按路径 id 直接查询且无归属过滤。
+python-a1-003,A1-IDOR,python,1,/api/documents/share,python/python-a1-003/app.py,请求体 document_id 直接决定共享文档，未校验文档归属。
+python-a1-004,A1-IDOR,python,1,/api/messages,python/python-a1-004/main.py,查询参数 user_id 可指定任意用户，消息列表未绑定认证用户。
+python-a1-005,A1-IDOR,python,1,/api/files/<int:file_id>,python/python-a1-005/app.py,归属比较使用客户端传入的 owner_id 而非当前登录用户，可伪造。
+python-a1-006,A1-IDOR,python,1,/api/tickets/bulk-close,python/python-a1-006/main.py,批量关闭工单仅按 ticket_ids 更新，未按当前用户限定归属。
+python-a1-007,A1-IDOR,python,1,/api/addresses/<int:address_id>,python/python-a1-007/app.py,地址修改使用路径 id 直接更新，未校验地址属于当前用户。
+python-a1-008,A1-IDOR,python,1,/api/reports/{report_id},python/python-a1-008/main.py,报告读取经 service 直查 SQL，仅按 report_id 过滤而无 owner 条件。
+python-a1-009,A1-IDOR,python,0,/api/reviews/<int:review_id>,python/python-a1-009/app.py,控制器在返回前比较 user_id 与 current_user.id，越权时 403。
+python-a1-010,A1-IDOR,python,0,/api/payments/<int:payment_id>,python/python-a1-010/app.py,删除语句带 user_id = current_user.id，无法删除他人支付单。
+python-a1-011,A1-IDOR,python,0,/api/billing/invoices/{invoice_id},python/python-a1-011/main.py,service 查询同时限定 id 与 current_user，跨用户读取失败。
+python-a1-012,A1-IDOR,python,0,/api/orders/<int:order_id>/summary,python/python-a1-012/app.py,订单摘要 SQL 同时限定 id 与 current_user.id，归属校验完整。
+python-a2-001,A2-Vertical,python,1,/api/admin/users/<int:user_id>/role,python/python-a2-001/app.py,管理员改角色接口仅要求登录，未校验调用者是否具备 admin 角色。
+python-a2-002,A2-Vertical,python,0,/api/admin/config,python/python-a2-002/app.py,自定义 role_required('admin') 装饰器先校验角色，非管理员返回 403。
+python-a2-003,A2-Vertical,python,1,/api/admin/users/{user_id},python/python-a2-003/main.py,删除用户属于管理员操作，路由仅依赖登录态而未要求 admin 角色。
+python-a2-004,A2-Vertical,python,1,/api/admin/settings,python/python-a2-004/app.py,系统配置修改接口仅 login_required，普通用户可改动全局设置。
+python-a2-005,A2-Vertical,python,0,/api/admin/audit-logs,python/python-a2-005/main.py,路由依赖 require_admin，内部查询角色非 admin 时拒绝。
+python-a3-001,A3-Unauth,python,1,/internal/ops/reindex,python/python-a3-001/app.py,内部运维重索引接口无任何认证或全局鉴权，可直接触发状态变更。
+python-a3-002,A3-Unauth,python,1,/api/reports,python/python-a3-002/main.py,报告列表接口无认证依赖，匿名请求即可读取全部报告。
+python-a3-003,A3-Unauth,python,1,/api/payments/export,python/python-a3-003/app.py,支付导出接口无登录保护，匿名用户可批量导出支付记录。
+python-a3-004,A3-Unauth,python,0,/api/connections,python/python-a3-004/app.py,before_request 对所有请求统一检查 session 登录态，未登录 401。
+python-a3-005,A3-Unauth,python,0,/api/audit/events,python/python-a3-005/main.py,APIRouter 级 dependencies 挂载 get_current_user，整个审计路由需认证。
+python-b6-001,B6-FieldExposure,python,1,/api/users/<int:user_id>,python/python-b6-001/app.py,归属校验正确，但 SELECT * 后 dict(row) 返回包含 password_hash 等全部字段。
+python-b6-002,B6-FieldExposure,python,1,/api/account,python/python-b6-002/app.py,全字段 dataclass 经 asdict 原样返回，暴露 password_hash 与 api_token。
+python-b6-003,B6-FieldExposure,python,1,/api/accounts/{account_id},python/python-b6-003/main.py,归属校验正确，但 AccountOut 包含全部敏感字段并经 model_dump 输出。
+python-b6-004,B6-FieldExposure,python,0,/api/profile,python/python-b6-004/app.py,仅返回白名单字段，邮箱与手机号已脱敏，不含密码或令牌。

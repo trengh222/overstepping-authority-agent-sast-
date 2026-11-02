@@ -1,0 +1,21 @@
+case_id,category,language,real_vulnerability,endpoint_path,source_file,note
+go-a1-001,A1-IDOR,go,1,/api/orders/:id,go/go-a1-001/main.go,已登录用户把路径里的订单号直接当主键查库且未绑定 uid，可读取他人订单
+go-a1-002,A1-IDOR,go,1,/api/invoices/:invoiceId,go/go-a1-002/main.go,发票号取自路径参数即查即返，缺少租户或用户归属过滤
+go-a1-003,A1-IDOR,go,0,/api/orders/:id,go/go-a1-003/main.go,查询条件同时包含订单 id 与当前 uid，拿他人订单查不到记录
+go-a1-004,A1-IDOR,go,1,/api/documents/preview,go/go-a1-004/main.go,doc_id 来自查询串即取文档正文，未校验 owner_id 是否为当前用户
+go-a1-005,A1-IDOR,go,1,/api/messages,go/go-a1-005/main.go,收件箱归属用户取自 user_id 查询参数，可枚举他人消息列表
+go-a1-006,A1-IDOR,go,0,/api/files/:id/download,go/go-a1-006/main.go,下载前比较 uploader_id 与当前 uid 且非本人返回 403
+go-a1-007,A1-IDOR,go,1,/api/orders/batch,go/go-a1-007/main.go,批量查询的 ids 全部来自请求体并按主键逐条取数，未限制归属
+go-a1-008,A1-IDOR,go,1,/api/tickets/:id/assign,go/go-a1-008/main.go,工单转派直接用路径参数发 UPDATE，未校验工单归属
+go-a1-009,A1-IDOR,go,0,/api/orders/:id,go/go-a1-009/main.go,仓储层 GetByIDAndUser 以 id 加 uid 联合取数并只返回 DTO
+go-a1-010,A1-IDOR,go,1,/api/messages/thread/:threadId,go/go-a1-010/main.go,会话历史按 threadId 直查，未确认当前用户属于该会话
+go-a2-001,A2-Vertical,go,1,/admin/users/:id,go/go-a2-001/main.go,管理员组只挂认证中间件且目标路由缺角色守卫，普通用户可删除任意用户
+go-a2-002,A2-Vertical,go,1,/admin/users/:id/role,go/go-a2-002/main.go,改角色接口仅全局认证没有 admin 角色校验，可自行提权
+go-a2-003,A2-Vertical,go,1,/admin/accounts/:id/balance,go/go-a2-003/main.go,资金余额调整属特权操作但组内无任何角色或管理员中间件
+go-a2-004,A2-Vertical,go,0,/admin/users/:id,go/go-a2-004/main.go,管理员组同时启用认证与 RequireAdmin 角色中间件
+go-a3-001,A3-Unauth,go,1,/internal/export/orders,go/go-a3-001/main.go,全应用无认证中间件，匿名请求即可导出全部订单
+go-a3-002,A3-Unauth,go,1,/api/users/:id/profile,go/go-a3-002/main.go,资料接口未做登录校验，匿名可遍历 id 读取他人资料
+go-a3-003,A3-Unauth,go,1,/internal/admin/backup,go/go-a3-003/main.go,内部备份接口完全没有认证，匿名即可触发数据库导出
+go-a3-004,A3-Unauth,go,0,/internal/export/orders,go/go-a3-004/main.go,全局注册认证中间件且导出仅限当前用户数据
+go-b6-001,B6-FieldExposure,go,1,/api/users/me,go/go-b6-001/main.go,本人资料查询直接返回实体结构体，password 与 card_no 原样输出
+go-b6-002,B6-FieldExposure,go,1,/api/billing/accounts/current,go/go-b6-002/main.go,账户接口整体序列化实体，暴露 card_no 与 access_token 等敏感字段

@@ -1,0 +1,28 @@
+# 越权白盒检测工具 —— 工程配置（方案 §3/§4）
+[project]
+name = "access-scan"
+version = "0.1.0"
+description = "白盒越权（IDOR/垂直越权/未授权/失效访问控制）自动检测工具：静态分析 + LLM 语义判定（Java / Go / JavaScript）"
+requires-python = ">=3.11"
+dependencies = [
+    "tree-sitter>=0.21",
+    "tree-sitter-java",        # 主力前端
+    "tree-sitter-javascript",
+    "tree-sitter-typescript",   # Node 前端解析 TypeScript
+    "tree-sitter-go",
+    "PyYAML>=6.0",
+    "anthropic>=0.40",         # L5 LLM 判定层（Anthropic 兼容端点，M2 启用）
+    "z3-solver>=4.12",         # 维度二“可触发”符号执行反例求解（M3.3）
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

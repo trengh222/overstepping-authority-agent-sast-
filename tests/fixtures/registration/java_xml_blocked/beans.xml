@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 注册可达安全闸：存在 XML Bean 配置时，不采信「包未被扫描」的确定性关闭。 -->
+<beans xmlns="http://www.springframework.org/schema/beans">
+    <bean id="legacyController" class="com.example.other.XmlBedController"/>
+</beans>

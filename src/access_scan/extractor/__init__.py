@@ -1,0 +1,1 @@
+"""L1+L2 语言前端：语言 AST → 统一 IR（Endpoint / AuthInfo / Resource）。"""

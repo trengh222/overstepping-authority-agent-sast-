@@ -1,0 +1,58 @@
+﻿模型: deepseek-flash  端点: https://api.deepseek.com/anthropic  SDK 可用: True
+采样: 3  对抗复核: True  候选: 33  静态扫描: 0.09s
+缓存: C:\Users\杨宇豪\Downloads\越权白盒agent\tests\benchmark\.cache\llm_s3_adv.db
+------------------------------------------------------------------------------
+[ 1/33] A1 GET /api/order/:id (main.go) → UNCERTAIN (build/auto_close) conf=0.00
+[ 2/33] A1 GET /api/order/:id (idor.go) → LIKELY (data/keep) conf=0.92
+[ 3/33] A1 GET /api/order/:id (main.go) → LIKELY (data/keep) conf=0.95
+[ 4/33] A1 GET /api/order/{id} (OrderBranchController.java) → LIKELY (data/keep) conf=0.91
+[ 5/33] A1 GET /api/order/{id} (OrderUnsatController.java) → LIKELY (data/keep) conf=0.92
+[ 6/33] A1 GET /api/order/{id} (OrderUnsoundController.java) → LIKELY (data/keep) conf=0.93
+[ 7/33] A1 GET /api/order/{id} (OrderController.java) → LIKELY (data/keep) conf=0.93
+[ 8/33] A1 GET /api/order/raw/{id} (OrderController.java) → LIKELY (data/keep) conf=0.85
+[ 9/33] A2 DELETE /manage/user/{id} (AdminControllerWeak.java) → LIKELY (data/keep) conf=0.89
+[10/33] A3 DELETE /manage/user/{id} (AdminController.java) → LIKELY (data/keep) conf=0.87
+[11/33] A4 POST /portal/user (AdminControllerClient.java) → LIKELY (permission/keep) conf=0.50
+[12/33] A1 GET /api/order/{id} (OrderController.java) → LIKELY (data/keep) conf=0.96
+[13/33] A1 GET /api/order/alias/{id} (OrderController.java) → LIKELY (data/keep) conf=0.90
+[14/33] A4 POST /api/register (RegisterController.java) → LIKELY (data/keep) conf=0.41
+[15/33] A1 get /api/order/:id (idor.js) → LIKELY (data/keep) conf=0.95
+[16/33] A1 get /api/order/:id (alias.js) → LIKELY (data/keep) conf=0.93
+[17/33] A1 get /api/order/:id (app.js) → LIKELY (data/keep) conf=0.89
+[18/33] A1 get /api/order/{id} (idor.php) → LIKELY (data/keep) conf=0.90
+[19/33] A1 get /api/order/{id} (routes.php) → LIKELY (data/keep) conf=0.93
+[20/33] A1 GET /manage/order/<int:oid> (app.py) → LIKELY (data/keep) conf=0.89
+[21/33] A1 GET /manage/order/<int:oid> (app.py) → LIKELY (data/keep) conf=0.88
+[22/33] A3 GET /manage/order/<int:oid> (app.py) → LIKELY (data/keep) conf=0.83
+[23/33] A1 GET /api/user/<int:uid> (app.py) → LIKELY (data/keep) conf=0.89
+[24/33] A4 GET /api/register (register.py) → LIKELY (data/keep) conf=0.91
+[25/33] A1 GET /api/order/<int:oid> (app.py) → LIKELY (data/keep) conf=0.93
+[26/33] A1 GET /api/export/<int:oid> (app.py) → UNCERTAIN (config/downgrade_ticket) conf=0.28
+[27/33] A1 get /api/order/:id (app.js) → LIKELY (data/keep) conf=0.84
+[28/33] A1 get /api/order/:id (app.js) → LIKELY (data/keep) conf=0.92
+[29/33] A1 GET /api/order/<int:oid> (app.py) → LIKELY (data/keep) conf=0.93
+[30/33] A1 GET /api/order/<int:oid> (app.py) → LIKELY (data/keep) conf=0.91
+[31/33] A1 get /api/order/:id (app.js) → LIKELY (data/keep) conf=0.87
+[32/33] A1 get /api/order/{id} (idor.php) → LIKELY (data/keep) conf=0.89
+[33/33] A1 get /api/order/:id (app.js) → LIKELY (data/keep) conf=0.90
+==============================================================================
+LLM 判定层基线结果（真实 LLM）
+==============================================================================
+耗时: 690.4s  API 调用: 127  缓存命中: 0
+verdict: CONFIRMED=12  LIKELY=19  UNCERTAIN=2  (经 LLM 判定 32)
+evidence_lines 缺失率: 0.0% (0/31 条判漏洞)
+reachability_class: {'build': 1, 'data': 30, 'permission': 1, 'config': 1}
+disposition:        {'auto_close': 1, 'promote': 12, 'keep': 19, 'downgrade_ticket': 1}
+
+LLM 层告警: 31  TP=30  FN=2  FP=0
+LLM 层召回   = 93.8%  (30/32)   静态层召回 = 32/32 (100.0%)
+LLM 层精确率 = 100.0%
+被 LLM 压制（静态候选 → UNCERTAIN）: 2
+
+--- LLM 层漏报 / 误杀（静态已检出） ---
+  ✗ A1 /api/export/<int:oid>  (reachability/app.py)
+  ✗ A1 /api/order/:id  (build/go_ignore/main.go)
+
+--- UNCERTAIN 的判定理由（截断） ---
+  · [A1] main.go /api/order/:id → 可达性判定（build）：整个文件被构建标记排除（//go:build ignore），不参与编译，按不可达自动关闭。
+  · [A1] app.py /api/export/<int:oid> → LLM 判定该路径不可达（配置开关关闭）。[2/3 采样一致，存在分歧] 端点 GET /api/export/<int:oid>（handler=export_order，app.py:16-19）的 auth 字段为

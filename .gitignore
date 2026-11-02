@@ -1,0 +1,29 @@
+# Python 缓存
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# pytest / 基准缓存
+.pytest_cache/
+.benchmarks/
+tests/benchmark/.cache/
+
+# 运行时产物（含被扫项目源码片段、本地绝对路径、LLM 响应缓存）
+runs/
+.access_scan_cache.db*
+.access_scan_state.db*
+*.sarif
+
+# 敏感配置（含 LLM 认证 token，模板见 config/llm.example.yaml）
+config/llm.yaml
+config/projects/
+.env
+.env.*
+
+# 第三方靶场源码（从上游克隆，不入库）
+tests/benchmark/webgoat/
+tests/benchmark/juice-shop/
+tests/benchmark/vampi/
+tests/benchmark/dvwa/

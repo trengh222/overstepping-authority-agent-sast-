@@ -1,0 +1,61 @@
+case_id,category,language,real_vulnerability,endpoint_path,source_file,note
+java-a1-001,A1-IDOR,java,1,/api/orders/{id},java/java-a1-001/OrderController.java,路径 id 直接经 Mapper 查订单且 SQL 无当前用户条件，可读他人订单。
+java-a1-002,A1-IDOR,java,1,/api/invoices,java/java-a1-002/InvoiceController.java,查询参数 invoiceId 直接交给 service 查库，未做归属校验。
+java-a1-003,A1-IDOR,java,1,/api/documents/rename,java/java-a1-003/DocumentController.java,body 中的 docId 直接用于改名更新与回查，未校验文档归属。
+java-a1-004,A1-IDOR,java,1,/api/projects/{projectId}/files/{fileId},java/java-a1-004/ProjectFileController.java,嵌套 projectId 与 fileId 均来自路径，SQL 仅做项目内匹配而不校验归属。
+java-a1-005,A1-IDOR,java,1,/api/payments/{paymentId},java/java-a1-005/PaymentController.java,paymentId 直达 Mapper 查询并返回卡号字段，无归属校验。
+java-a1-006,A1-IDOR,java,1,/api/messages,java/java-a1-006/MessageController.java,查询参数 userId 决定消息查询对象，可读任意用户收件箱。
+java-a1-007,A1-IDOR,java,1,/api/cart/items/batch,java/java-a1-007/CartController.java,批量 itemIds 直接 IN 查询购物车项，未按当前用户过滤。
+java-a1-008,A1-IDOR,java,1,/api/reports/export,java/java-a1-008/ReportExportController.java,查询参数 reportId 直接导出报表 CSV，未校验报表归属。
+java-a1-009,A1-IDOR,java,1,/api/attachments/{attachmentId}/download,java/java-a1-009/AttachmentController.java,附件 attachmentId 直接查 storage_key 并下载，未校验归属。
+java-a1-010,A1-IDOR,java,1,/api/addresses/{addressId},java/java-a1-010/AddressController.java,路径 addressId 直接执行 DELETE 收货地址，无归属校验。
+java-a1-011,A1-IDOR,java,1,/api/tickets/{ticketId},java/java-a1-011/TicketController.java,路径 ticketId 直接更新工单标题与优先级，无归属校验。
+java-a1-012,A1-IDOR,java,1,/api/reviews/{reviewId},java/java-a1-012/ReviewController.java,controller 到 service 再到 mapper 只传 reviewId，SQL 无用户条件。
+java-a1-013,A1-IDOR,java,1,/api/orders/no/{orderNo},java/java-a1-013/OrderLookupController.java,订单号由路径参数提供且未与当前用户绑定就查库返回。
+java-a1-014,A1-IDOR,java,1,/api/orders/{id}/cancel,java/java-a1-014/OrderCancelController.java,路径 id 直接更新订单状态为已取消，无归属校验。
+java-a1-015,A1-IDOR,java,1,/api/documents/{docId}/versions/{versionId},java/java-a1-015/DocumentVersionController.java,docId 与 versionId 均来自路径且直达 SQL，未校验文档归属。
+java-a1-016,A1-IDOR,java,1,/api/orders/export,java/java-a1-016/OrderExportController.java,body 中的 orderIds 批量导出订单，SQL 仅按 id 集合过滤。
+java-a1-017,A1-IDOR,java,0,/api/orders/{id},java/java-a1-017/OrderController.java,controller 取 session 用户并与订单 userId 比较，不一致返回 403。
+java-a1-018,A1-IDOR,java,0,/api/invoices/{invoiceId},java/java-a1-018/InvoiceController.java,service 以 invoiceId 加 userId 查询，非本人发票返回 404。
+java-a1-019,A1-IDOR,java,0,/api/documents/{docId},java/java-a1-019/DocumentController.java,Mapper SQL 附带 owner_id 等于当前用户，越权查询无结果。
+java-a1-020,A1-IDOR,java,0,/api/invoices,java/java-a1-020/InvoiceListController.java,忽略请求里的 userId 参数，改用 session 登录用户查询发票。
+java-a1-021,A1-IDOR,java,0,/api/projects/{projectId}/files/{fileId},java/java-a1-021/ProjectFileController.java,先校验项目 owner_id 归属，不符返回 404 后再读文件。
+java-a1-022,A1-IDOR,java,0,/api/tickets/{ticketId},java/java-a1-022/TicketController.java,删除 SQL 附带 reporter_id 等于当前用户，未命中返回 404。
+java-a1-023,A1-IDOR,java,0,/api/reviews/{reviewId},java/java-a1-023/ReviewController.java,目标方法用 @PreAuthorize 的 SpEL 调用 reviewAccess 校验评论归属。
+java-a1-024,A1-IDOR,java,0,/api/messages/{messageId},java/java-a1-024/MessageController.java,service 以 messageId 加登录用户名联表查询，越权无结果。
+java-a1-025,A1-IDOR,java,0,/api/cart/items/batch/remove,java/java-a1-025/CartController.java,批量删除 SQL 附带 user_id 等于当前用户，仅能删自己购物车。
+java-a1-026,A1-IDOR,java,0,/api/orders/no/{orderNo},java/java-a1-026/OrderLookupController.java,Mapper SQL 同时限定 order_no 与 user_id，跨用户查询无结果。
+java-a2-001,A2-Vertical,java,1,/api/admin/users/{id}/role,java/java-a2-001/AdminUserController.java,改角色接口缺少 @PreAuthorize 而同类方法有，普通用户可提权。
+java-a2-002,A2-Vertical,java,1,/api/admin/users/{id},java/java-a2-002/AdminUserDeleteController.java,删除用户接口无 admin 角色校验，任意登录用户可删号。
+java-a2-003,A2-Vertical,java,1,/api/admin/config,java/java-a2-003/AdminConfigController.java,系统配置 PUT 接口无角色校验，按 body 键值批量改全局配置。
+java-a2-004,A2-Vertical,java,1,/api/admin/audit,java/java-a2-004/AdminAuditController.java,审计日志查询接口无任何鉴权，可读全量审计记录。
+java-a2-005,A2-Vertical,java,1,/api/admin/users/export,java/java-a2-005/AdminUserExportController.java,全量用户导出接口无角色校验，输出邮箱与手机号。
+java-a2-006,A2-Vertical,java,1,/api/admin/notify/broadcast,java/java-a2-006/AdminNotifyController.java,站内信广播接口无角色校验，任意用户可向全站推送。
+java-a2-007,A2-Vertical,java,1,/api/admin/backup/run,java/java-a2-007/AdminBackupController.java,备份任务触发接口无角色校验，可被普通用户调用。
+java-a2-008,A2-Vertical,java,1,/api/admin/comments/{id},java/java-a2-008/AdminCommentController.java,删除评论管理接口无角色校验，可删任意评论。
+java-a2-009,A2-Vertical,java,0,/api/admin/users/{id}/role,java/java-a2-009/AdminRoleController.java,目标方法带 @PreAuthorize 的 hasRole ADMIN 校验。
+java-a2-010,A2-Vertical,java,0,/api/admin/users/{id},java/java-a2-010/AdminUserDeleteController.java,目标方法带 @Secured 的 ROLE_ADMIN 注解。
+java-a2-011,A2-Vertical,java,0,/api/admin/audit,java/java-a2-011/AdminAuditController.java,目标方法带 @RolesAllowed 的 ADMIN 注解。
+java-a2-012,A2-Vertical,java,0,/api/admin/users/export,java/java-a2-012/AdminUserExportController.java,方法内遍历 SecurityContext 角色，非 ADMIN 返回 403。
+java-a3-001,A3-Unauth,java,1,/internal/metrics,java/java-a3-001/InternalMetricsController.java,内部指标接口无认证也无全局拦截器，匿名可读会话统计。
+java-a3-002,A3-Unauth,java,1,/internal/cache/dump,java/java-a3-002/InternalCacheController.java,内部缓存转储接口无认证，匿名可读缓存键值与属主。
+java-a3-003,A3-Unauth,java,1,/internal/jobs/run,java/java-a3-003/InternalJobController.java,内部任务触发接口无认证，匿名可插入并启动后台任务。
+java-a3-004,A3-Unauth,java,1,/api/ops/health/detail,java/java-a3-004/OpsHealthController.java,运维健康详情接口无认证，暴露数据库目录与当前用户。
+java-a3-005,A3-Unauth,java,1,/sys/db/pool,java/java-a3-005/SysDbPoolController.java,数据源连接池接口无认证，直接返回数据库密码。
+java-a3-006,A3-Unauth,java,1,/internal/users/{id}/reset-password,java/java-a3-006/InternalPasswordController.java,内部重置密码接口无认证，可重置任意用户并拿到明文临时密码。
+java-a3-007,A3-Unauth,java,0,/internal/metrics/detail,java/java-a3-007/InternalMetricController.java,WebMvcConfigurer 注册拦截器到全部路径，preHandle 校验登录与内部接口角色。
+java-a3-008,A3-Unauth,java,0,/internal/reports/{date},java/java-a3-008/InternalReportController.java,目标方法带 @PreAuthorize 的 isAuthenticated 校验。
+java-a3-009,A3-Unauth,java,0,/internal/ops/restart,java/java-a3-009/InternalOpsController.java,目标方法带 @PreAuthorize 的 hasAnyRole ADMIN 与 OPS 校验。
+java-a3-010,A3-Unauth,java,0,/sys/db/pool,java/java-a3-010/SysDbController.java,SecurityFilterChain 对 /sys 路径要求认证。
+java-a4-001,A4-ClientAuth,java,1,/api/orders/mine,java/java-a4-001/UserOrderController.java,X-User-Id 请求头直接决定查询用户，伪造该头即可读他人订单。
+java-a4-002,A4-ClientAuth,java,1,/api/wallet/balance,java/java-a4-002/WalletBalanceController.java,查询参数 userId 直接决定钱包查询对象。
+java-a4-003,A4-ClientAuth,java,1,/api/reports/personal,java/java-a4-003/PersonalReportController.java,cookie uid 直接决定个人报表查询用户。
+java-a4-004,A4-ClientAuth,java,1,/api/transfers,java/java-a4-004/TransferController.java,body 中 userId 作为转出账户，可操作他人钱包余额。
+java-a4-005,A4-ClientAuth,java,0,/api/orders/mine,java/java-a4-005/SessionOrderController.java,从服务端 session 取登录用户，未使用任何客户端身份参数。
+java-a4-006,A4-ClientAuth,java,0,/api/orders/mine,java/java-a4-006/JwtOrderController.java,校验 JWT 签名与过期时间后取 uid，非法令牌返回 401。
+java-b6-001,B6-FieldExposure,java,1,/api/users/{id},java/java-b6-001/UserDetailController.java,接口直接返回含 password 与 id_card 的 User 实体，未做脱敏。
+java-b6-002,B6-FieldExposure,java,1,/api/profile,java/java-b6-002/ProfileController.java,返回当前用户 Account 实体，password 与 api_token 未脱敏。
+java-b6-003,B6-FieldExposure,java,1,/api/orders/{id},java/java-b6-003/OrderLookupController.java,接口直接返回 OrderEntity 实体，暴露 buyer_phone 与 buyer_email。
+java-b6-004,B6-FieldExposure,java,1,/api/admin/orders/{id}/snapshot,java/java-b6-004/AdminOrderSnapshotController.java,用 ObjectMapper 序列化订单实体，输出手机号与邮箱。
+java-b6-005,B6-FieldExposure,java,0,/api/me/orders/{id},java/java-b6-005/MyOrderSummaryController.java,按 session 用户过滤并返回白名单 OrderVO，仅 4 个字段。
+java-b6-006,B6-FieldExposure,java,0,/api/me/profile,java/java-b6-006/SelfProfileController.java,敏感字段加 @JsonIgnore，仅输出 id 与 username 与 nickname。

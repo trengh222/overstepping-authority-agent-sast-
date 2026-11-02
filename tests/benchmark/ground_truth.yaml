@@ -1,0 +1,230 @@
+# 越权检测基准 ground truth（静态召回层，M4 样本集）
+# vulnerable=true 表示静态规则层应检出该 (file, path, subtype)；匹配用 file 后缀 + path 精确 + subtype 精确。
+targets:
+  # ---- Java 数字 id（真数据流 + 跨过程）----
+  - file: "java/OrderController.java"
+    path: "/api/order/{id}"
+    subtype: "A1"
+    vulnerable: true
+  - file: "java/OrderController.java"
+    path: "/api/order/raw/{id}"
+    subtype: "A1"
+    vulnerable: true
+  - file: "java/vertical/a3/AdminController.java"
+    path: "/manage/user/{id}"
+    subtype: "A3"
+    vulnerable: true
+  - file: "java/vertical/a4/AdminControllerClient.java"
+    path: "/portal/user"
+    subtype: "A4"
+    vulnerable: true
+  - file: "java/vertical/a2/AdminControllerWeak.java"
+    path: "/manage/user/{id}"
+    subtype: "A2"
+    vulnerable: true
+  # ---- Java 跨过程 + 别名 ----
+  - file: "java_cross/OrderController.java"
+    path: "/api/order/{id}"
+    subtype: "A1"
+    vulnerable: true
+  - file: "java_cross/OrderController.java"
+    path: "/api/order/alias/{id}"
+    subtype: "A1"
+    vulnerable: true
+  # ---- Java 符号执行样本（静态召回层数据流存在，同样应检出 A1）----
+  - file: "java/idor_branch/OrderBranchController.java"
+    path: "/api/order/{id}"
+    subtype: "A1"
+    vulnerable: true
+  - file: "java/idor_unsat/OrderUnsatController.java"
+    path: "/api/order/{id}"
+    subtype: "A1"
+    vulnerable: true
+  - file: "java/idor_unsound/OrderUnsoundController.java"
+    path: "/api/order/{id}"
+    subtype: "A1"
+    vulnerable: true
+  # ---- Python（Flask/SQLAlchemy）----
+  - file: "java_mass/RegisterController.java"
+    path: "/api/register"
+    subtype: "A4"
+    vulnerable: true
+  # ---- Node（Express/Prisma）----
+  - file: "node/idor.js"
+    path: "/api/order/:id"
+    subtype: "A1"
+    vulnerable: true
+  - file: "node_alias/alias.js"
+    path: "/api/order/:id"
+    subtype: "A1"
+    vulnerable: true
+  # ---- Go（Gin + database/sql）----
+  - file: "go/idor.go"
+    path: "/api/order/:id"
+    subtype: "A1"
+    vulnerable: true
+  # ---- PHP（Laravel Eloquent）----
+  - file: "node_cross/app.js"
+    path: "/api/order/:id"
+    subtype: "A1"
+    vulnerable: true
+  - file: "go_cross/main.go"
+    path: "/api/order/:id"
+    subtype: "A1"
+    vulnerable: true
+  - file: "data/uuid_idor/OrderUuidController.java"
+    path: "/api/order/{id}"
+    subtype: "A1"
+    vulnerable: true
+  # ---- D2 所有权判定：方法名含 User 不再当作归属约束 ----
+  - file: "ownership/java_method_name/UserSeriesController.java"
+    path: "/api/series/{userId}"
+    subtype: "A1"
+    vulnerable: true
+  # ---- D3 包装 sink / D5 自定义鉴权注解 ----
+  - file: "d3_wrapper/OrderWrapperController.java"
+    path: "/api/order/{id}"
+    subtype: "A1"
+    vulnerable: true
+  - file: "d5_auth/FileController.java"
+    path: "/file/uploadVideo"
+    subtype: "A1"
+    vulnerable: true
+  - file: "d5_auth/FileController.java"
+    path: "/file/public"
+    subtype: "A1"
+    vulnerable: true
+  - file: "d5_auth/FileController.java"
+    path: "/file/custom/{id}"
+    subtype: "A1"
+    vulnerable: true
+  # ---- D6 接口→Impl→Mapper 跨过程 / D7 隐式 query 参数 ----
+  - file: "d6_service_impl/SeriesController.java"
+    path: "/api/series/{id}"
+    subtype: "A1"
+    vulnerable: true
+  - file: "d6_object/StatisticsController.java"
+    path: "/statisticsInfo/loadDataList"
+    subtype: "A1"
+    vulnerable: true
+  - file: "d6_object/StatisticsController.java"
+    path: "/statisticsInfo/loadDataListQuery"
+    subtype: "A1"
+    vulnerable: true
+  - file: "d6_object/StatisticsController.java"
+    path: "/statisticsInfo/add"
+    subtype: "A3"
+    vulnerable: true
+  - file: "d7_param/ImplicitQueryController.java"
+    path: "/api/user/userInfo"
+    subtype: "A1"
+    vulnerable: true
+  # ---- 通用性样本（命名与特定项目无关：本类包装 / 对象参数 / 自定义鉴权注解）----
+  - file: "generic_java/GenericController.java"
+    path: "/api/generic/{id}"
+    subtype: "A1"
+    vulnerable: true
+  - file: "generic_java/GenericController.java"
+    path: "/api/generic/search"
+    subtype: "A1"
+    vulnerable: true
+  - file: "generic_java/GenericController.java"
+    path: "/api/generic/protected/{id}"
+    subtype: "A1"
+    vulnerable: true
+  - file: "generic_java/AssetController.java"
+    path: "/api/assets/read"
+    subtype: "A1"
+    vulnerable: true
+  # ---- 五类可达性样本（构建可达 / 注册可达；可达性判定在 L5，静态召回仍应检出）----
+  - file: "build/go_ignore/main.go"
+    path: "/api/order/:id"
+    subtype: "A1"
+    vulnerable: true
+  # ---- 构建清单事实（Maven/Gradle 多模块未声明）----
+  - file: "build/maven_unlisted/app/src/main/java/com/example/app/AppController.java"
+    path: "/api/order/{id}"
+    subtype: "A1"
+    vulnerable: true
+  - file: "build/maven_unlisted/orphan/src/main/java/com/example/orphan/OrphanController.java"
+    path: "/api/order/{id}"
+    subtype: "A1"
+    vulnerable: true
+  - file: "build/gradle_unlisted/app/src/main/java/com/example/app/AppController.java"
+    path: "/api/order/{id}"
+    subtype: "A1"
+    vulnerable: true
+  - file: "build/gradle_unlisted/orphan/src/main/java/com/example/orphan/OrphanController.java"
+    path: "/api/order/{id}"
+    subtype: "A1"
+    vulnerable: true
+  # ---- 配置可达性样本（Java：导出开关 / 仓库配置关闭或缺失）----
+  # 静态召回仍应产出 A1，可达性在 L5 由配置事实降级，故计为正样本（不计 FP）。
+  - file: "reachability/java_export/ExportController.java"
+    path: "/api/export/{oid}"
+    subtype: "A1"
+    vulnerable: true
+  - file: "reachability/java_repo_off/OrderController.java"
+    path: "/api/orders/{oid}"
+    subtype: "A1"
+    vulnerable: true
+  - file: "reachability/java_repo_missing/ShipmentController.java"
+    path: "/api/shipment/{oid}"
+    subtype: "A1"
+    vulnerable: true
+  - file: "registration/js_unmounted/app.js"
+    path: "/api/order/:id"
+    subtype: "A1"
+    vulnerable: true
+  - file: "registration/js_mounted/app.js"
+    path: "/api/order/:id"
+    subtype: "A1"
+    vulnerable: true
+  # ---- Java/Spring 注册事实（扫描根 / @Import / XML 安全闸）----
+  - file: "registration/java_unscanned/com/example/other/UnscannedController.java"
+    path: "/api/order/{id}"
+    subtype: "A1"
+    vulnerable: true
+  - file: "registration/java_scanned/com/example/app/web/ScannedController.java"
+    path: "/api/order/{id}"
+    subtype: "A1"
+    vulnerable: true
+  - file: "registration/java_imported/com/example/other/ImportedController.java"
+    path: "/api/order/{id}"
+    subtype: "A1"
+    vulnerable: true
+  - file: "registration/java_xml_blocked/com/example/other/XmlBedController.java"
+    path: "/api/order/{id}"
+    subtype: "A1"
+    vulnerable: true
+  # ---- 通用数据访问识别（sink 放宽：#1 SQL 文本 / #2 DAO 接收者）----
+  - file: "sink/sql_text/app.js"
+    path: "/api/order/:id"
+    subtype: "A1"
+    vulnerable: true
+  - file: "sink/dao_receiver/app.js"
+    path: "/api/order/:id"
+    subtype: "A1"
+    vulnerable: true
+
+# 负样本：已知不应检出（若被误报，将计入 FP）。
+# 仅用于报告展示，不参与指标计算（FP = 全部检出 - TP）。
+negative:
+  - file: "java/OrderControllerSafe.java"
+    path: "/api/order/{id}"
+  - file: "java/OrderControllerSafe.java"
+    path: "/api/order/mine/{id}"
+  - file: "java/vertical/safe/AdminControllerSafe.java"
+    path: "/admin/safe/user/{id}"
+  - file: "java/vertical/a2/AdminControllerStrong.java"
+    path: "/manage/user/{id}"
+  - file: "java_cross/OrderController.java"
+    path: "/api/order/mine/{id}"
+  - file: "java_mass/RegisterController.java"
+    path: "/api/register_safe"
+  - file: "node_cross/app.js"
+    path: "/api/order/mine/:id"
+  - file: "go_cross/main.go"
+    path: "/api/order/mine/:id"
+  - file: "sink/negative/app.js"
+    path: "/api/order/:id"

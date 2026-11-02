@@ -1,0 +1,9 @@
+# L4 过滤层召回规则阈值（方案 §6.3，可调）
+exclude_prefixes:            # 明确公开/静态资源，跳过
+  - /public/
+  - /static/
+  - /swagger
+  - /actuator/health
+gateway_protected_prefixes:  # 上游网关已鉴权，代码不体现 → 垂直越权降级为 UNCERTAIN
+  - /admin/
+  - /internal/
